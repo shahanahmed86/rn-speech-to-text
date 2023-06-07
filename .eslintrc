@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": "@react-native-community",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "curly": "off"
+  }
+}

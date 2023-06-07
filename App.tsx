@@ -1,8 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import {useMemo} from 'react';
 import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Speech from './Speech';
+import React = require('react');
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';

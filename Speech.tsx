@@ -1,17 +1,22 @@
+/* eslint-disable react-native/no-inline-styles */
 import Voice from '@react-native-voice/voice';
-import {useEffect, useState} from 'react';
-import {View, TouchableOpacity, Alert} from 'react-native';
-import {Text, Button} from 'react-native-paper';
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import {Button, Text} from 'react-native-paper';
 
-/** @typedef {'up'|'down'|'left'|'right'} ActionType */
+type ActionType = 'up' | 'down' | 'left' | 'right';
 
-const ACTIONS = {up: 'up', down: 'down', left: 'left', right: 'right'};
+type Action = {
+  [key in ActionType]: string;
+};
+
+const ACTIONS: Action = {up: 'up', down: 'down', left: 'left', right: 'right'};
 
 function Speech() {
-  const [event, setEvent] = useState('');
-  const [results, setResults] = useState([]);
-  const [error, setError] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
+  const [event, setEvent] = useState<string>('');
+  const [results, setResults] = useState<string[]>([]);
+  const [error, setError] = useState<Error | null | undefined>(null);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -26,8 +31,8 @@ function Speech() {
 
       Voice.onSpeechStart = () => setIsRecording(true);
       Voice.onSpeechEnd = () => setIsRecording(false);
-      Voice.onSpeechError = ({error}) => setError(error);
-      Voice.onSpeechResults = ({value}) => setResults(value);
+      Voice.onSpeechError = ({error: e}) => setError(e as Error);
+      Voice.onSpeechResults = ({value}) => setResults(value!);
     })();
     return () => {
       //destroy the process after switching the screen
@@ -40,14 +45,12 @@ function Speech() {
     const ind = prev.findIndex(t => t.split(' ').some(k => k in ACTIONS));
     if (ind < 0) return;
 
-    /**  @type {ActionType[]} */
-    const keys = prev[ind].split(' ').reverse();
+    const key = prev[ind]
+      .split(' ')
+      .reverse()
+      .find(k => k in ACTIONS) as ActionType;
 
-    /**  @type {ActionType} */
-    const key = keys.find(k => k in ACTIONS);
-    if (!key) return; // never
-
-    setEvent(`You\'ve triggered "${ACTIONS[key]}" event`);
+    setEvent(`You've triggered "${ACTIONS[key]}" event`);
   }, [results, setResults]);
 
   const onStartRecording = async () => {
@@ -56,16 +59,16 @@ function Speech() {
       setResults([]);
       setError(null);
       await Voice.start('en-US');
-    } catch (error) {
-      setError(error);
+    } catch (e) {
+      setError(e as Error);
     }
   };
 
   const onStopRecording = async () => {
     try {
       await Voice.stop();
-    } catch (error) {
-      setError(error);
+    } catch (e) {
+      setError(e as Error);
     }
   };
 
@@ -77,7 +80,7 @@ function Speech() {
         justifyContent: 'space-between',
       }}>
       <View style={{flex: 0.6, paddingTop: 24, alignSelf: 'center'}}>
-        <Text style={{fontSize: 20, color: '#1877F2', fontWeight: 500}}>
+        <Text style={{fontSize: 20, color: '#1877F2', fontWeight: '500'}}>
           Voice Input
         </Text>
       </View>
@@ -91,7 +94,7 @@ function Speech() {
         </Text>
         {error ? (
           <Text style={{color: '#EC0023', fontSize: 18}}>
-            {error.message || error}
+            {(error.message || error).toString()}
           </Text>
         ) : null}
       </View>
